@@ -119,7 +119,7 @@ sum = foldRight (+) 0
 length ::
   List a
   -> Int
-length = foldRight (\_ s -> s + 1) 0
+length = foldRight (const (+1)) 0
   -- error "todo: Course.List#length"
 
 -- | Map the given function on each element of the list.
@@ -134,8 +134,7 @@ map ::
   (a -> b)
   -> List a
   -> List b
-map f (x :. xs) = f x :. map f xs
-map _ Nil = Nil
+map f = foldRight (\a b -> f a :. b) Nil
   -- error "todo: Course.List#map"
 
 -- | Return elements satisfying the given predicate.
@@ -152,8 +151,7 @@ filter ::
   (a -> Bool)
   -> List a
   -> List a
-filter f (x :. xs) = if f x then x :. filter f xs else filter f xs
-filter _ Nil = Nil
+filter f = foldRight (\x l -> if f x then x :. l else l) Nil
   -- error "todo: Course.List#filter"
 
 -- | Append two lists to a new list.
@@ -172,9 +170,10 @@ filter _ Nil = Nil
   List a
   -> List a
   -> List a
-(++) Nil a = a
-(++) a Nil = a
-(++) (x :. xs) (y :. ys) = x :. (xs ++ (y :. Nil) ++ ys)
+(++) = flip (foldRight (:.))
+-- (++) Nil a = a
+-- (++) a Nil = a
+-- (++) (x :. xs) (y :. ys) = x :. (xs ++ (y :. Nil) ++ ys)
   -- error "todo: Course.List#(++)"
 
 infixr 5 ++
@@ -209,8 +208,9 @@ flatMap ::
   (a -> List b)
   -> List a
   -> List b
-flatMap _ Nil = Nil
-flatMap f (x :. xs) = f x ++ flatMap f xs
+flatMap f = flatten . map f
+-- flatMap _ Nil = Nil
+-- flatMap f (x :. xs) = f x ++ flatMap f xs
   -- error "todo: Course.List#flatMap"
 
 -- | Flatten a list of lists to a list (again).
@@ -220,7 +220,7 @@ flatMap f (x :. xs) = f x ++ flatMap f xs
 flattenAgain ::
   List (List a)
   -> List a
-flattenAgain = flatMap P.id
+flattenAgain = flatMap id
   -- error "todo: Course.List#flattenAgain"
 
 -- | Convert a list of optional values to an optional list of values.
@@ -293,7 +293,8 @@ find p xs =
 lengthGT4 ::
   List a
   -> Bool
-lengthGT4 a = length a > 4
+lengthGT4 (_:._:._:._:._) = True
+lengthGT4 _ = False
   -- error "todo: Course.List#lengthGT4"
 
 -- | Reverse a list.
@@ -310,7 +311,7 @@ lengthGT4 a = length a > 4
 reverse ::
   List a
   -> List a
-reverse = foldRight (\curr prev -> prev ++ (curr :. Nil)) Nil
+reverse = foldLeft (flip (:.)) Nil
   -- error "todo: Course.List#reverse"
 
 -- | Produce an infinite `List` that seeds with the given value at its head,
