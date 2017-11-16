@@ -171,9 +171,6 @@ filter f = foldRight (\x l -> if f x then x :. l else l) Nil
   -> List a
   -> List a
 (++) = flip (foldRight (:.))
--- (++) Nil a = a
--- (++) a Nil = a
--- (++) (x :. xs) (y :. ys) = x :. (xs ++ (y :. Nil) ++ ys)
   -- error "todo: Course.List#(++)"
 
 infixr 5 ++
@@ -209,8 +206,6 @@ flatMap ::
   -> List a
   -> List b
 flatMap f = flatten . map f
--- flatMap _ Nil = Nil
--- flatMap f (x :. xs) = f x ++ flatMap f xs
   -- error "todo: Course.List#flatMap"
 
 -- | Flatten a list of lists to a list (again).
