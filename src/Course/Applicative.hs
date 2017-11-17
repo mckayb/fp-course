@@ -365,16 +365,18 @@ replicateA n =
 --
 -- >>> filtering (const $ True :. True :.  Nil) (1 :. 2 :. 3 :. Nil)
 -- [[1,2,3],[1,2,3],[1,2,3],[1,2,3],[1,2,3],[1,2,3],[1,2,3],[1,2,3]]
---
--- (a -> f Bool -> f a)
--- f Bool -> f a
 filtering ::
   Applicative f =>
   (a -> f Bool)
   -> List a
   -> f (List a)
-filtering f a = 
-  error "todo: Course.Applicative#filtering"
+filtering p =
+  foldRight (\curr prev -> lift2 acc (p curr) prev <*> pure curr) (pure Nil)
+    where
+      acc :: Bool -> List a -> (a -> List a)
+      acc a b = if a then (:. b) else const b
+  -- error "todo: Course.Applicative#filtering"
+
 
 -----------------------
 -- SUPPORT LIBRARIES --
