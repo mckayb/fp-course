@@ -79,8 +79,15 @@ the contents of c
 -- /Tip:/ use @getArgs@ and @run@
 main ::
   IO ()
-main =
-  error "todo: Course.FileIO#main"
+main = process =<< getArgs
+  where
+      process :: List Chars -> IO ()
+      process l = case l of
+        fn :. Nil -> run fn
+        _ -> putStrLn "Invalid usage"
+
+  
+  -- error "todo: Course.FileIO#main"
 
 -- Given a file name, read it and for each line in that file, read and print contents of each.
 -- Use @getFiles@ and @printFiles@.
@@ -95,6 +102,7 @@ run =
 getFiles ::
   List FilePath
   -> IO (List (FilePath, Chars))
+-- getFiles l = getFile <$> l
 getFiles =
   error "todo: Course.FileIO#getFiles"
 
@@ -103,8 +111,8 @@ getFiles =
 getFile ::
   FilePath
   -> IO (FilePath, Chars)
-getFile =
-  error "todo: Course.FileIO#getFile"
+getFile name = (\a -> (name, a)) <$> readFile name
+  -- error "todo: Course.FileIO#getFile"
 
 -- Given a list of (file name and file contents), print each.
 -- Use @printFile@.
