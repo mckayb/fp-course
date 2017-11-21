@@ -94,24 +94,28 @@ main = process =<< getArgs
 run ::
   FilePath
   -> IO ()
-run =
-  error "todo: Course.FileIO#run"
+run filename = do
+  content <- readFile filename
+  results <- getFiles (lines content)
+  printFiles results
+  -- error "todo: Course.FileIO#run"
 
 -- Given a list of file names, return list of (file name and file contents).
 -- Use @getFile@.
 getFiles ::
   List FilePath
   -> IO (List (FilePath, Chars))
--- getFiles l = getFile <$> l
-getFiles =
-  error "todo: Course.FileIO#getFiles"
+getFiles list =
+  sequence (getFile <$> list)
+  -- error "todo: Course.FileIO#getFiles"
 
 -- Given a file name, return (file name and file contents).
 -- Use @readFile@.
 getFile ::
   FilePath
   -> IO (FilePath, Chars)
-getFile name = (\a -> (name, a)) <$> readFile name
+getFile name =
+  (\a -> (name, a)) <$> readFile name
   -- error "todo: Course.FileIO#getFile"
 
 -- Given a list of (file name and file contents), print each.
@@ -119,8 +123,8 @@ getFile name = (\a -> (name, a)) <$> readFile name
 printFiles ::
   List (FilePath, Chars)
   -> IO ()
-printFiles =
-  error "todo: Course.FileIO#printFiles"
+printFiles list = (void . sequence) (uncurry printFile <$> list)
+  -- error "todo: Course.FileIO#printFiles"
 
 -- Given the file name, and file contents, print them.
 -- Use @putStrLn@.
@@ -128,5 +132,7 @@ printFile ::
   FilePath
   -> Chars
   -> IO ()
-printFile =
-  error "todo: Course.FileIO#printFile"
+printFile a b = do
+  putStrLn a
+  putStrLn b
+  -- error "todo: Course.FileIO#printFile"
